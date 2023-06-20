@@ -1,25 +1,25 @@
 class Api {
-    constructor() {
-        this._checkRes = (res => res.ok ? res.json() : Promise.reject);
-        this._authCode = 'b66b2bcb-af09-40bb-b429-5ea9d883fa32';
-        this._mestoBaseUrl = 'https://mesto.nomoreparties.co/v1/cohort-66'
+    constructor(authCode, baseUrl) {
+        this._checkRes = (res => res.ok ? res.json() : Promise.reject());
+        this.authCode = authCode;
+        this.baseUrl = baseUrl
     }
 
     getAllCards() {
-        return fetch(`${this._mestoBaseUrl}/cards`, {
+        return fetch(`${this.baseUrl}/cards`, {
             method: 'GET',
             headers: {
-                authorization: this._authCode
+                authorization: this.authCode
             }
         })
             .then(this._checkRes)
     }
 
     sendCard(data) {
-        return fetch(`${this._mestoBaseUrl}/cards`, {
+        return fetch(`${this.baseUrl}/cards`, {
             method: 'POST',
             headers: {
-                authorization: this._authCode,
+                authorization: this.authCode,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -31,30 +31,30 @@ class Api {
     }
 
     deleteCard(cardId) {
-        return fetch(`${this._mestoBaseUrl}/cards/${cardId}`, {
+        return fetch(`${this.baseUrl}/cards/${cardId}`, {
             method: 'DELETE',
             headers: {
-                authorization: this._authCode
+                authorization: this.authCode
             }
         })
             .then(this._checkRes)
     }
 
     getUserInfo() {
-        return fetch(`${this._mestoBaseUrl}/users/me`, {
+        return fetch(`${this.baseUrl}/users/me`, {
             method: 'GET',
             headers: {
-                authorization: this._authCode
+                authorization: this.authCode
             }
         })
             .then(this._checkRes)
     }
 
     sendUserInfo(data) {
-        return fetch(`${this._mestoBaseUrl}/users/me`, {
+        return fetch(`${this.baseUrl}/users/me`, {
             method: 'PATCH',
             headers: {
-                authorization: this._authCode,
+                authorization: this.authCode,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -66,10 +66,10 @@ class Api {
     }
 
     changeAvatar(data) {
-        return fetch(`${this._mestoBaseUrl}/users/me/avatar`, {
+        return fetch(`${this.baseUrl}/users/me/avatar`, {
             method: 'PATCH',
             headers: {
-                authorization: this._authCode,
+                authorization: this.authCode,
                 'Content-Type': 'application/json'
 
             },
@@ -81,26 +81,26 @@ class Api {
     }
 
     likeCard(cardId) {
-        return fetch(`${this._mestoBaseUrl}/cards/${cardId}/likes`, {
+        return fetch(`${this.baseUrl}/cards/${cardId}/likes`, {
             method: 'PUT',
             headers: {
-                authorization: this._authCode,
+                authorization: this.authCode,
             }
         })
             .then(this._checkRes)
     }
 
     dislikeCard(cardId) {
-        return fetch(`${this._mestoBaseUrl}/cards/${cardId}/likes`, {
+        return fetch(`${this.baseUrl}/cards/${cardId}/likes`, {
             method: 'DELETE',
             headers: {
-                authorization: this._authCode
+                authorization: this.authCode
             }
         })
             .then(this._checkRes)
     }
 }
 
-const api = new Api();
+const api = new Api('b66b2bcb-af09-40bb-b429-5ea9d883fa32', 'https://mesto.nomoreparties.co/v1/cohort-66');
 
 export default api;
