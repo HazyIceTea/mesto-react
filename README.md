@@ -17,6 +17,9 @@ Js features:
 * Opening and closing different pop-ups;  
 * Profile Editing
 * Now made with React
+* Adding new cards
+* Deleting cards
+* Likes system
 
 What's new:  
 Added:
