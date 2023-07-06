@@ -4,21 +4,21 @@ import CurrentUserContext from "../contexts/CurrentUserContext";
 import React from "react";
 
 function EditProfilePopup ({isOpened, onClose, onUpdateUser }){
-    const [name, changeName] = useState('');
-    const [description, changeDescription] = useState('');
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
     const currentUser = React.useContext(CurrentUserContext);
 
     React.useEffect(() => {
-        changeName(currentUser.name);
-        changeDescription(currentUser.about);
-    }, [currentUser]);
+        setName(currentUser.name);
+        setDescription(currentUser.about);
+    }, [currentUser, isOpened]);
 
     function handleName(evt){
-        changeName(evt.target.value);
+        setName(evt.target.value);
     }
 
     function handleDescription(evt){
-        changeDescription(evt.target.value);
+        setDescription(evt.target.value);
     }
 
     function handleSubmit(evt) {
@@ -41,11 +41,11 @@ function EditProfilePopup ({isOpened, onClose, onUpdateUser }){
                 <input type="text" name="name" placeholder="Имя" id="profile-name-input"
                        className="edit-form__input edit-form__input_value_name" required
                        minLength="2"
-                       maxLength="40" defaultValue={name}  onChange={handleName}/>
+                       maxLength="40" value={name}  onChange={handleName}/>
                 <span className="edit-form__validation-error" id="profile-name-input-error"></span>
                 <input type="text" name="info" placeholder="Род занятий" id="profile-job-input"
                        className="edit-form__input edit-form__input_value_job" required minLength="2"
-                       maxLength="200" defaultValue={description} onChange={handleDescription}/>
+                       maxLength="200" value={description} onChange={handleDescription}/>
                 <span className="edit-form__validation-error" id="profile-job-input-error"></span>
             </fieldset>
         </PopupWithForm>

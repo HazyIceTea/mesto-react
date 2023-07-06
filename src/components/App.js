@@ -12,55 +12,57 @@ import AddCardPopup from "./AddCardPopup";
 
 function App() {
 
-    const [isAvatarPopupOpened, changeAvatarState] = useState(false);
-    const [isEditProfileOpened, changeProfileState] = useState(false);
-    const [isAddPlacePopupOpened, changePlaceState] = useState(false);
-    const [isImagePopupOpened, changeImagePopupState] = useState(false);
-    const [currentCard, changeCurrentCard] = useState({});
-    const [currentUser, changeCurrentUser] = useState({});
+    const [isAvatarPopupOpened, setIsAvatarPopupOpened] = useState(false);
+    const [isEditProfileOpened, setIsEditProfileOpened] = useState(false);
+    const [isAddPlacePopupOpened, setIsAddPlacePopupOpened] = useState(false);
+    const [isImagePopupOpened, setIsImagePopupOpened] = useState(false);
+    const [currentCard, setCurrentCard] = useState({});
+    const [currentUser, setCurrentUser] = useState({});
 
-    const [cards, changeCards] = useState([]);
+    const [cards, setCards] = useState([]);
 
     useEffect(() => {
         api.getAllCards()
-            .then(res => changeCards(res))
+            .then(res => setCards(res))
             .catch(err => console.error(`Ошибка при загрузке начальных данных страницы ${err}`))
     }, [])
 
 
     useEffect(() => {
         api.getUserInfo()
-            .then(res => changeCurrentUser(res));
+            .then(res => setCurrentUser(res))
+            .catch(err => console.error(`Ошибка получения данных пользователя ${err}`))
     }, [])
 
     function closeAllPopups() {
-        changeAvatarState(false);
-        changeProfileState(false);
-        changePlaceState(false);
-        changeImagePopupState(false);
+        setIsAvatarPopupOpened(false);
+        setIsEditProfileOpened(false);
+        setIsAddPlacePopupOpened(false);
+        setIsImagePopupOpened(false);
     }
 
     function handleEditAvatarClick() {
-        changeAvatarState(true);
+        setIsAvatarPopupOpened
+        (true);
     }
 
     function handleEditProfileClick() {
-        changeProfileState(true);
+        setIsEditProfileOpened(true);
     }
 
     function handleAddPlaceClick() {
-        changePlaceState(true);
+        setIsAddPlacePopupOpened(true);
     }
 
     function handleCardClick(data) {
-        changeImagePopupState(true);
-        changeCurrentCard(data);
+        setIsImagePopupOpened(true);
+        setCurrentCard(data);
     }
 
     function handleUpdateUser(userData) {
         api.sendUserInfo(userData)
             .then(res => {
-                changeCurrentUser(res);
+                setCurrentUser(res);
                 closeAllPopups()
             })
             .catch(err => console.error(`Ошибка изменения профиля ${err}`))
@@ -69,7 +71,7 @@ function App() {
     function handleUpdateAvatar(data) {
         api.changeAvatar(data)
             .then(res => {
-                changeCurrentUser(res);
+                setCurrentUser(res);
                 closeAllPopups()
             })
             .catch(err => console.error(`Ошибка смены аватара ${err}`))
@@ -78,8 +80,8 @@ function App() {
     function handleAddCardSubmit(cardData) {
         api.sendCard(cardData)
             .then(res => {
-                changeCards([res, ...cards]);
-                closeAllPopups()
+                setCards([res, ...cards]);
+                closeAllPopups();
             })
             .catch(err => console.error(`Ошибка отправки карточки ${err}`))
     }
@@ -90,13 +92,13 @@ function App() {
         if (!isLiked) {
             api.likeCard(card._id)
                 .then((newCard) => {
-                    changeCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+                    setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
                 })
                 .catch(err => console.error(`Ошибка обработки лайка карточки ${err}`))
         } else {
             api.dislikeCard(card._id)
                 .then((newCard) => {
-                    changeCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+                    setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
                 })
                 .catch(err => console.error(`Ошибка обработки лайка карточки ${err}`))
         }
@@ -106,7 +108,7 @@ function App() {
     function handleCardDelete(card) {
         api.deleteCard(card._id)
             .then(() => {
-                changeCards(cards.filter(item => {
+                setCards(cards.filter(item => {
                     return item._id !== card._id
                 }))
             })

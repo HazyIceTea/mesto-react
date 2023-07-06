@@ -1,17 +1,22 @@
 import PopupWithForm from "./PopupWithForm";
-import {useState} from "react";
+import React, {useState} from "react";
 
 function AddCardPopup ({isOpened, onClose, onAddPlace}) {
 
-    const [cardName, changeCardName] = useState('');
-    const [cardLink, changeCardLink] = useState('');
+    const [cardName, setCardName] = useState('');
+    const [cardLink, setCardLink] = useState('');
+
+    React.useEffect(() => {
+        setCardName('');
+        setCardLink('');
+    }, [isOpened]);
 
     function handleName(evt){
-        changeCardName(evt.target.value);
+        setCardName(evt.target.value);
     }
 
     function handleLink(evt){
-        changeCardLink(evt.target.value);
+        setCardLink(evt.target.value);
     }
 
     function handleSubmit(evt) {
@@ -29,11 +34,12 @@ function AddCardPopup ({isOpened, onClose, onAddPlace}) {
                 <input type="text" name="name" placeholder="Название" id="picture-name-input"
                        className="edit-form__input edit-form__input_value_card-name" required
                        minLength="2"
-                       maxLength="30" onChange={handleName}/>
+                       maxLength="30" value={cardName} onChange={handleName}/>
                 <span className="edit-form__validation-error" id="picture-name-input-error"></span>
                 <input type="url" name="link" placeholder="Ссылка на картинку"
                        id="picture-link-input"
-                       className="edit-form__input edit-form__input_value_image-src" required onChange={handleLink}/>
+                       className="edit-form__input edit-form__input_value_image-src" required
+                       value={cardLink} onChange={handleLink}/>
                 <span className="edit-form__validation-error" id="picture-link-input-error"></span>
             </fieldset>
         </PopupWithForm>
