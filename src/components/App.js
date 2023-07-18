@@ -1,6 +1,4 @@
-import Header from './Header';
 import Main from "./Main";
-import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import React, {useEffect, useState} from "react";
@@ -9,8 +7,25 @@ import CurrentUserContext from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddCardPopup from "./AddCardPopup";
+import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
+import Register from "./Register";
+import Login from "./Login";
+import ProtectedRoute from "./ProtectedRoute";
+import {getMyInfo} from "../utils/Auth";
 
 function App() {
+    const [loggedIn, setLoggedIn] = useState(false)
+
+    function logIn() {
+        setLoggedIn(true);
+    }
+
+    function logOut(){
+        setLoggedIn(false);
+        localStorage.removeItem('jwt');
+    }
+
+    const navigate = useNavigate();
 
     const [isAvatarPopupOpened, setIsAvatarPopupOpened] = useState(false);
     const [isEditProfileOpened, setIsEditProfileOpened] = useState(false);
@@ -19,7 +34,15 @@ function App() {
     const [currentCard, setCurrentCard] = useState({});
     const [currentUser, setCurrentUser] = useState({});
 
+
     const [cards, setCards] = useState([]);
+
+    const [email, setEmail] = useState('');
+
+    function getEmail(){
+        getMyInfo(localStorage.getItem('jwt'))
+            .then(res => setEmail(res.data.email))
+    }
 
     useEffect(() => {
         api.getAllCards()
@@ -32,6 +55,18 @@ function App() {
         api.getUserInfo()
             .then(res => setCurrentUser(res))
             .catch(err => console.error(`Ошибка получения данных пользователя ${err}`))
+    }, [])
+
+    useEffect(() =>{
+        const jwt = localStorage.getItem('jwt');
+        if(jwt){
+            getMyInfo(jwt)
+                .then(res=> {if(res){
+                    setLoggedIn(true);
+                    setEmail(res.data.email)
+                    navigate('/');
+                }})
+        }
     }, [])
 
     function closeAllPopups() {
@@ -118,11 +153,19 @@ function App() {
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
-            <Header/>
-            <Main onEditAvatar={handleEditAvatarClick} onEditProfile={handleEditProfileClick}
-                  onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick} cards={cards}
-                  onCardLike={handleCardLike} onCardDelete={handleCardDelete}/>
-            <Footer/>
+
+
+            <Routes>
+                <Route path="/" element={<ProtectedRoute path="/" element={Main} onEditAvatar={handleEditAvatarClick}
+                                                         onEditProfile={handleEditProfileClick}
+                                                         onAddPlace={handleAddPlaceClick} onCardClick={handleCardClick}
+                                                         cards={cards}
+                                                         onCardLike={handleCardLike} onCardDelete={handleCardDelete}
+                                                         loggedIn={loggedIn} logOut={logOut} email={email}/>}/>
+                <Route path="/sign-up" element={<Register/>}/>
+                <Route path="/sign-in" element={<Login logIn={logIn} getEmail={getEmail}/>}/>
+                <Route path="/*" element={<Navigate to="/" />} />
+            </Routes>
 
             <EditProfilePopup isOpened={isEditProfileOpened} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
 
@@ -134,7 +177,9 @@ function App() {
                              onUpdateAvatar={handleUpdateAvatar}/>
 
             <ImagePopup isOpened={isImagePopupOpened} currentCard={currentCard} onClose={closeAllPopups}/>
+
         </CurrentUserContext.Provider>
+
     );
 }
 

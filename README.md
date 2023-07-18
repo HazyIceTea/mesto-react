@@ -20,11 +20,13 @@ Js features:
 * Adding new cards
 * Deleting cards
 * Likes system
+* Registration
 
 What's new:  
 Added:
 * UI convenience
 * UX improvements
 * Server interactions
+* Registration feature
 * Github Pages not yet
 
